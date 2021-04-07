@@ -1,1 +1,1 @@
-# PyMultiMediaCompression
+# Python Multi-Media Compression

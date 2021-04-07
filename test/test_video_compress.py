@@ -1,0 +1,1 @@
+from pymultimediacompression import videomedia
