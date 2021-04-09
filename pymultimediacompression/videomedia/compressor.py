@@ -2,7 +2,7 @@ import os
 import ffmpeg
 import subprocess
 import shutil
-from .utils import bitrate_size_based, gb_to_bit, mb_to_bit, kb_to_bit, b_to_bit
+from pymultimediacompression.utilities.utils import bitrate_size_based, gb_to_bit, mb_to_bit, kb_to_bit, b_to_bit
 
 MISSING_REQUIREMENTS = "FFmpeg required to be installed to use PyMultiMediaCompression \n Check https://github.com/AbdullrhmanAljasser/PyMultiMediaCompression"
 
@@ -69,14 +69,7 @@ def video_compress_size_based(
     for x in range(len(splitter)-1):
         path_to_file = path_to_file + '\\' +splitter[x]
 
-    valid_ext = ['.webm', '.mpg', '.mp2', '.mpeg', '.mpe', '.mpv', '.ogg', '.mp4', '.m4p', '.m4v', '.avi', '.wmv', '.flv', '.swf', '.mov', '.qt']
-    valid_flag = False
-
-    for valid in valid_ext:
-        if valid == ext:
-            valid_flag = True
-
-    if not valid_flag:
+    if not valid_video_ext(ext):
         raise Exception("Input file is not of valid video type")
     # END <==
 
@@ -105,22 +98,10 @@ def video_compress_size_based(
     file_info_duration = file_info['format']['duration']
     file_info_bitrate = (float(file_info_size)) / float(file_info_duration)
 
-    size_type_flag = False
-    for Stype in ['gb','mb','kb','b']:
-        if Stype == size_type:
-            size_type_flag = True
-
-    if not size_type_flag:
+    if not valid_size_type(size_type):
         raise Exception("Size type is not correct, must be gb, mb, kb, or b")
 
-    if size_type == 'gb':
-        finalsize = gb_to_bit(finalsize)
-    if size_type == 'mb':
-        finalsize = mb_to_bit(finalsize)
-    if size_type == 'kb':
-        finalsize = kb_to_bit(finalsize)
-    if size_type == 'b':
-        finalsize = b_to_bit(finalsize)
+    finalsize = final_bit_size(finalsize, size_type=size_type)
 
     bitrate_for_compression = bitrate_size_based(finalsize, file_info_duration)
 
