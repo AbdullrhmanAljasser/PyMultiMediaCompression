@@ -97,6 +97,7 @@ def final_bit_size(
         return kb_to_bit(finalsize)
     if size_type == 'b':
         return b_to_bit(finalsize)
+    raise Exception("Entered size_type is incorrect format, gb, mb, kb or b (byte)")
 
 def valid_size_type(size_type):
     size_type_flag = False
@@ -122,7 +123,7 @@ def valid_video_ext(
 def valid_audio_ext(
     ext
 ):
-    valid_ext = ['.mpg', '.mpeg', '.avi', '.wmv', '.mov', '.rm', '.ram', '.swf', '.flv', '.ogg', '.webm', '.mp4']
+    valid_ext = ['.mpg', '.mpeg', '.avi', '.wmv', '.mov', '.rm', '.ram', '.swf', '.flv', '.ogg', '.webm', '.mp4', '.mp3']
 
     for valid in valid_ext:
         if valid == ext:
