@@ -13,7 +13,7 @@ Install FFMPEG following these steps:
 
 
 ## TODO List
-[ ] Documentation write up
-[ ] Complete video compression with all capabilities
-[ ] Image compression
-[ ] Audio compression 
+- [ ] Documentation write up
+- [ ] Complete video compression with all capabilities
+- [ ] Image compression
+- [ ] Audio compression 

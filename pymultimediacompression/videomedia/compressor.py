@@ -1,7 +1,23 @@
 import os
 import ffmpeg
+import subprocess
 import shutil
 from .utils import bitrate_size_based, gb_to_bit, mb_to_bit, kb_to_bit, b_to_bit
+
+MISSING_REQUIREMENTS = "FFmpeg required to be installed to use PyMultiMediaCompression \n Check https://github.com/AbdullrhmanAljasser/PyMultiMediaCompression"
+
+'''
+Check if required installs are satisfied
+
+Raise an error if not
+'''
+def check_required():
+    check = subprocess.call(['which', 'ffmpeg'])
+    if check != 0:
+        raise Exception(MISSING_REQUIREMENTS)
+    check = subprocess.call(['which', 'ffprobe'])
+    if check != 0:
+        raise Exception(MISSING_REQUIREMENTS)
 
 '''
 Video Compression Based on given Size
@@ -25,10 +41,17 @@ def video_compress_size_based(
     output=None,
     codec='libx264'
 ):
+    # Check if the required installs are satisfied
+    check_required()
+
+    # Check if filepath is a file
     if not os.path.isfile(filepath):
         raise Exception("File path is not a valid file")
+    # Check if filepath is absolute or not
     if not os.path.isabs(filepath):
         filepath = os.getcwd() + filepath
+
+    # Check if asked size is a correct number ==>
     try:
         float(finalsize)
     except Exception as e:
@@ -36,7 +59,9 @@ def video_compress_size_based(
     
     if finalsize <= 0:
         raise Exception("Unable to compress to 0 or below size")
+    # END <==
 
+    # Retrieve file extension to ensure it applicable ==>
     ext = os.path.splitext(filepath)[-1].lower()
     file_name_w_ext = filepath.split('\\')[-1]
     splitter = filepath.split('\\')
@@ -53,7 +78,9 @@ def video_compress_size_based(
 
     if not valid_flag:
         raise Exception("Input file is not of valid video type")
+    # END <==
 
+    # Setup output (Overwrite/None)
     if output is None:
         if not os.path.isdir('compressed'):
             os.mkdir('compressed')
@@ -61,8 +88,17 @@ def video_compress_size_based(
         else: 
             os.chdir(os.getcwd()+'\\compressed')
     else:
-        #TODO CHECK OUTPUT AND DIRECTORY
-        1==1
+        if os.path.isdir(output):
+            if not os.path.isfile(output):
+                if not os.path.isabs(output):
+                    output = os.getcwd() + output
+                    os.chdir(output)
+                else:
+                    os.chdir(output)
+            else:
+                raise Exception("Output path is a file not a directory")
+        else:
+            raise Exception("Output path is not a valid directory, maybe file doesn't exists?")
 
     file_info = ffmpeg.probe(filepath)
     file_info_size = file_info['format']['size']
@@ -102,11 +138,13 @@ def video_compress_size_based(
         # Moving to overwrite file
         shutil.move(path_to_compressed, filepath)
     else:
-        #TODO change the output
-        1 == 1
+        # Moving to the specified output
+        True
+        # shutil.move(path_to_compressed, output)
 
-    print(os.getcwd(), file_info_duration, bitrate_for_compression)
+    return True
 
 __all__ = [
-    'video_compress_size_based'
+    'video_compress_size_based',
+    'check_required'
 ]
